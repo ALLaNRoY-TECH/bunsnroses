@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 export interface MenuModalProps {
   isOpen: boolean;
@@ -16,6 +16,7 @@ interface MenuItem {
 }
 
 interface MenuSection {
+  id: string;
   title: string;
   category: string;
   pageNumber: number;
@@ -39,6 +40,7 @@ interface MenuSection {
 
 export const MENU_PAGES_DATA: MenuSection[] = [
   {
+    id: "sec-mocktails",
     title: "Mocktail",
     category: "Mocktails & Refreshers",
     pageNumber: 1,
@@ -69,11 +71,12 @@ export const MENU_PAGES_DATA: MenuSection[] = [
     footnote: "All prices are exclusive of GST. Prepared fresh to order."
   },
   {
+    id: "sec-teas",
     title: "Teas & Matcha",
     category: "Matcha, Teas & Sips",
     pageNumber: 2,
     foodImage: "/food/matcha.jpg",
-    foodAlt: "Whisked Ceremonial Matcha Latte",
+    foodAlt: "Fresh Stone-Ground Ceremonial Uji Matcha Bowl",
     heroText: "Stone-ground Uji ceremonial matcha & comforting artisanal milk teas.",
     callout: {
       title: "Velvet Dreams",
@@ -98,6 +101,7 @@ export const MENU_PAGES_DATA: MenuSection[] = [
     footnote: "Prices exclusive of GST. Oat milk / almond milk substitutes available."
   },
   {
+    id: "sec-coffee",
     title: "Coffee",
     category: "Artisanal Coffee & Roasts",
     pageNumber: 3,
@@ -129,6 +133,7 @@ export const MENU_PAGES_DATA: MenuSection[] = [
     footnote: "All espresso extracted on double-walled commercial brass group-heads."
   },
   {
+    id: "sec-soups",
     title: "Soups & Salads",
     category: "Soups & Crisp Greens",
     pageNumber: 4,
@@ -154,6 +159,7 @@ export const MENU_PAGES_DATA: MenuSection[] = [
     footnote: "All soups prepared in-house daily without artificial thickening agents."
   },
   {
+    id: "sec-starters",
     title: "To Start",
     category: "Small Plates & Starters",
     pageNumber: 5,
@@ -191,6 +197,7 @@ export const MENU_PAGES_DATA: MenuSection[] = [
     footnote: "Exclusive of GST. Items marked with (P) contain Pork; (B) contain Beef."
   },
   {
+    id: "sec-pasta",
     title: "Pasta",
     category: "Handmade Pasta & Noodles",
     pageNumber: 6,
@@ -218,6 +225,7 @@ export const MENU_PAGES_DATA: MenuSection[] = [
     footnote: "All pasta rolled fresh in our kitchen with imported durum semolina."
   },
   {
+    id: "sec-sandwiches",
     title: "Sandwich & Rice",
     category: "Sandos, Toasties & Rice Bowls",
     pageNumber: 7,
@@ -249,6 +257,7 @@ export const MENU_PAGES_DATA: MenuSection[] = [
     footnote: "Bread loaves baked daily in our morning oven."
   },
   {
+    id: "sec-mains",
     title: "Big Plates & Pizza",
     category: "Mains & Wood-Style Pizzas",
     pageNumber: 8,
@@ -283,6 +292,7 @@ export const MENU_PAGES_DATA: MenuSection[] = [
     footnote: "Pizza dough cold-fermented for 48 hours for blistered airy edges."
   },
   {
+    id: "sec-desserts",
     title: "Sweet Endings",
     category: "Desserts & Delicacies",
     pageNumber: 9,
@@ -311,11 +321,56 @@ export const MENU_PAGES_DATA: MenuSection[] = [
 ];
 
 export default function MenuModal({ isOpen, onClose }: MenuModalProps) {
-  const [activePageIndex, setActivePageIndex] = useState<number>(0);
+  const [activeSectionId, setActiveSectionId] = useState<string>("sec-mocktails");
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+
+  // Close modal on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    if (isOpen) {
+      window.addEventListener("keydown", handleKeyDown);
+    }
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
+
+  // Handle scroll position to update active pill
+  const handleScroll = () => {
+    if (!scrollContainerRef.current) return;
+    const container = scrollContainerRef.current;
+    const containerTop = container.scrollTop;
+
+    for (let i = MENU_PAGES_DATA.length - 1; i >= 0; i--) {
+      const sec = MENU_PAGES_DATA[i];
+      const el = document.getElementById(sec.id);
+      if (el) {
+        const offsetTop = el.offsetTop - container.offsetTop - 140;
+        if (containerTop >= offsetTop) {
+          setActiveSectionId(sec.id);
+          break;
+        }
+      }
+    }
+  };
+
+  const scrollToSection = (id: string) => {
+    setActiveSectionId(id);
+    const el = document.getElementById(id);
+    const container = scrollContainerRef.current;
+    if (el && container) {
+      const top = el.offsetTop - container.offsetTop - 110;
+      container.scrollTo({ top, behavior: "smooth" });
+    }
+  };
+
+  const scrollToTop = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
 
   if (!isOpen) return null;
-
-  const activePage = MENU_PAGES_DATA[activePageIndex];
 
   return (
     <div
@@ -326,8 +381,8 @@ export default function MenuModal({ isOpen, onClose }: MenuModalProps) {
         className="relative bg-[#f8f7f3] text-[#111111] border-4 border-[#111111] w-full max-w-6xl h-[92vh] flex flex-col shadow-[16px_16px_0px_rgba(0,0,0,1)] overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* TOP EDITORIAL MASTHEAD BAR */}
-        <header className="flex items-center justify-between px-6 py-4 border-b-2 border-[#111111] bg-white">
+        {/* TOP EDITORIAL MASTHEAD BAR (Sticky) */}
+        <header className="sticky top-0 z-30 flex items-center justify-between px-6 py-4 border-b-2 border-[#111111] bg-white">
           <div className="flex items-center gap-4">
             <div className="border border-black px-2.5 py-1 font-mono-code text-[11px] font-black tracking-widest bg-black text-white">
               BUNS N’ ROSES
@@ -343,6 +398,9 @@ export default function MenuModal({ isOpen, onClose }: MenuModalProps) {
           </div>
 
           <div className="flex items-center gap-3">
+            <span className="hidden md:inline-block font-mono-code text-xs text-neutral-500 mr-2">
+              SCROLL THROUGH ALL SECTIONS ↓
+            </span>
             {/* Close Button */}
             <button
               type="button"
@@ -355,19 +413,19 @@ export default function MenuModal({ isOpen, onClose }: MenuModalProps) {
           </div>
         </header>
 
-        {/* SECTION TABS (QUICK NAVIGATION PILLS) */}
+        {/* STICKY CATEGORY NAV PILLS (Jump directly or scroll freely) */}
         <nav
-          className="flex items-center gap-1.5 px-6 py-2.5 bg-[#f0ede6] border-b-2 border-black overflow-x-auto no-scrollbar font-mono-code text-[10px] uppercase tracking-wider"
-          aria-label="Menu Sections"
+          className="sticky top-[69px] z-20 flex items-center gap-2 px-6 py-3 bg-[#f0ede6]/95 backdrop-blur-md border-b-2 border-black overflow-x-auto no-scrollbar font-mono-code text-[10px] uppercase tracking-wider shadow-sm"
+          aria-label="Menu Categories"
         >
           {MENU_PAGES_DATA.map((sec, idx) => (
             <button
-              key={sec.title}
+              key={sec.id}
               type="button"
-              onClick={() => setActivePageIndex(idx)}
-              className={`whitespace-nowrap px-3 py-1.5 border transition-all cursor-pointer ${
-                activePageIndex === idx
-                  ? "bg-black text-white border-black font-bold shadow-[2px_2px_0px_rgba(0,0,0,0.3)]"
+              onClick={() => scrollToSection(sec.id)}
+              className={`whitespace-nowrap px-3.5 py-1.5 border-2 transition-all cursor-pointer ${
+                activeSectionId === sec.id
+                  ? "bg-black text-white border-black font-bold shadow-[2px_2px_0px_rgba(0,0,0,0.3)] scale-[1.02]"
                   : "bg-white text-neutral-800 border-black/40 hover:border-black hover:bg-neutral-100"
               }`}
             >
@@ -377,246 +435,261 @@ export default function MenuModal({ isOpen, onClose }: MenuModalProps) {
           ))}
         </nav>
 
-        {/* MAIN BODY AREA - PURELY EMBEDDED REAL DISHES */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-8 bg-[#f8f7f3]">
-          <div className="max-w-5xl mx-auto flex flex-col gap-8 animate-fadeIn">
-            {/* Category Banner & Authentic Food Photograph Header */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 border-2 border-black bg-white overflow-hidden shadow-[8px_8px_0px_rgba(17,17,17,1)]">
-              {/* Actual Food Photograph */}
-              <div className="lg:col-span-5 relative h-64 lg:h-auto border-b-2 lg:border-b-0 lg:border-r-2 border-black bg-neutral-900 overflow-hidden group">
-                <img
-                  src={activePage.foodImage}
-                  alt={activePage.foodAlt}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none" />
-                <div className="absolute bottom-3 left-4 right-4 flex justify-between items-end text-white font-mono-code text-[10px]">
-                  <span className="bg-black/90 px-2.5 py-1 border border-white/30 uppercase tracking-widest font-bold">
-                    FOOD HIGHLIGHT · 0{activePage.pageNumber}
-                  </span>
-                  <span className="text-neutral-200 uppercase font-semibold">
-                    {activePage.category}
-                  </span>
-                </div>
-              </div>
-
-              {/* Section Introduction & Headline */}
-              <div className="lg:col-span-7 p-6 sm:p-8 flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center justify-between border-b border-black/20 pb-3 mb-4">
-                    <span className="font-mono-code text-[11px] font-bold tracking-widest text-neutral-500 uppercase">
-                      SECTION 0{activePage.pageNumber} / {activePage.category}
-                    </span>
-                    <span className="font-mono-code text-[11px] font-semibold bg-neutral-100 border border-black/30 px-2 py-0.5">
-                      SEMBAKKAM · CHENNAI
-                    </span>
-                  </div>
-
-                  <h2 className="font-editorial-serif text-4xl sm:text-5xl font-black uppercase tracking-tight text-black mb-3">
-                    {activePage.title}
-                  </h2>
-                  <p className="font-classical-serif text-lg text-neutral-700 italic leading-snug max-w-lg mb-6">
-                    “{activePage.heroText}”
-                  </p>
-                </div>
-
-                {/* Highlight Callout Box if any */}
-                {activePage.callout && (
-                  <div className="border-2 border-black p-4 bg-[#fbf9f4] shadow-[4px_4px_0px_rgba(0,0,0,0.15)] flex justify-between items-center gap-4">
-                    <div>
-                      {activePage.callout.tag && (
-                        <span className="font-mono-code text-[9px] bg-black text-white px-1.5 py-0.5 uppercase tracking-widest block w-fit mb-1 font-bold">
-                          {activePage.callout.tag}
-                        </span>
-                      )}
-                      <h4 className="font-editorial-serif text-lg font-bold">
-                        {activePage.callout.title}
-                      </h4>
-                      <p className="font-mono-code text-[11px] text-neutral-600">
-                        {activePage.callout.desc}
-                      </p>
-                    </div>
-                    <div className="font-mono-code text-xl font-black text-black shrink-0 border-l-2 border-black/20 pl-4">
-                      ₹{activePage.callout.price}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* SECONDARY FOOD SPOTLIGHT (if section has second dish) */}
-            {activePage.extraFoodImage && (
-              <div className="border-2 border-black bg-white p-4 flex flex-col sm:flex-row items-center gap-4 shadow-[4px_4px_0px_rgba(0,0,0,1)]">
-                <div className="w-24 h-24 shrink-0 border border-black overflow-hidden bg-neutral-100">
+        {/* CONTINUOUS SCROLLABLE MENU BODY */}
+        <div
+          ref={scrollContainerRef}
+          onScroll={handleScroll}
+          className="flex-1 overflow-y-auto scroll-smooth p-4 sm:p-8 bg-[#f8f7f3] space-y-16"
+        >
+          {MENU_PAGES_DATA.map((section, idx) => (
+            <section
+              key={section.id}
+              id={section.id}
+              className="max-w-5xl mx-auto flex flex-col gap-6 pt-2 scroll-mt-24"
+            >
+              {/* Category Banner & Authentic Food Photograph Header */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 border-2 border-black bg-white overflow-hidden shadow-[8px_8px_0px_rgba(17,17,17,1)]">
+                {/* 100% Real Food Photograph */}
+                <div className="lg:col-span-5 relative h-64 lg:h-auto border-b-2 lg:border-b-0 lg:border-r-2 border-black bg-neutral-900 overflow-hidden group">
                   <img
-                    src={activePage.extraFoodImage}
-                    alt={activePage.extraFoodAlt || "Featured dish"}
-                    className="w-full h-full object-cover"
+                    src={section.foodImage}
+                    alt={section.foodAlt}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent pointer-events-none" />
+                  <div className="absolute bottom-3 left-4 right-4 flex justify-between items-end text-white font-mono-code text-[10px]">
+                    <span className="bg-black/90 px-2.5 py-1 border border-white/30 uppercase tracking-widest font-bold">
+                      SECTION 0{section.pageNumber} · {section.category}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex-1">
-                  <span className="font-mono-code text-[10px] uppercase font-bold text-neutral-500">
-                    KITCHEN SPECIALTY
+
+                {/* Section Introduction & Headline */}
+                <div className="lg:col-span-7 p-6 sm:p-8 flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between border-b border-black/20 pb-3 mb-4">
+                      <span className="font-mono-code text-[11px] font-bold tracking-widest text-neutral-500 uppercase">
+                        PAGE 0{section.pageNumber} OF 09
+                      </span>
+                      <span className="font-mono-code text-[11px] font-semibold bg-neutral-100 border border-black/30 px-2 py-0.5">
+                        SEMBAKKAM · CHENNAI
+                      </span>
+                    </div>
+
+                    <h2 className="font-editorial-serif text-4xl sm:text-5xl font-black uppercase tracking-tight text-black mb-3">
+                      {section.title}
+                    </h2>
+                    <p className="font-classical-serif text-lg text-neutral-700 italic leading-snug max-w-lg mb-6">
+                      “{section.heroText}”
+                    </p>
+                  </div>
+
+                  {/* Highlight Callout Box if any */}
+                  {section.callout && (
+                    <div className="border-2 border-black p-4 bg-[#fbf9f4] shadow-[4px_4px_0px_rgba(0,0,0,0.15)] flex justify-between items-center gap-4">
+                      <div>
+                        {section.callout.tag && (
+                          <span className="font-mono-code text-[9px] bg-black text-white px-1.5 py-0.5 uppercase tracking-widest block w-fit mb-1 font-bold">
+                            {section.callout.tag}
+                          </span>
+                        )}
+                        <h4 className="font-editorial-serif text-lg font-bold">
+                          {section.callout.title}
+                        </h4>
+                        <p className="font-mono-code text-[11px] text-neutral-600">
+                          {section.callout.desc}
+                        </p>
+                      </div>
+                      <div className="font-mono-code text-xl font-black text-black shrink-0 border-l-2 border-black/20 pl-4">
+                        ₹{section.callout.price}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Extra Real Food Spotlight Card (if section has multiple food shots) */}
+              {section.extraFoodImage && (
+                <div className="border-2 border-black bg-white p-4 flex flex-col sm:flex-row items-center gap-4 shadow-[4px_4px_0px_rgba(0,0,0,1)]">
+                  <div className="w-24 h-24 shrink-0 border border-black overflow-hidden bg-neutral-100">
+                    <img
+                      src={section.extraFoodImage}
+                      alt={section.extraFoodAlt || "Featured dish"}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <span className="font-mono-code text-[10px] uppercase font-bold text-neutral-500">
+                      KITCHEN SIGNATURE DISH
+                    </span>
+                    <h4 className="font-editorial-serif text-lg font-bold">
+                      {section.extraFoodAlt}
+                    </h4>
+                    <p className="font-mono-code text-xs text-neutral-600">
+                      Crafted fresh to order in our open kitchen. Ask your table server for pairing recommendations.
+                    </p>
+                  </div>
+                  <div className="font-mono-code text-xs font-bold border border-black px-3 py-1 bg-[#f0ede6]">
+                    FRESHLY PLATED
+                  </div>
+                </div>
+              )}
+
+              {/* 2-COLUMN EMBEDDED EDITORIAL DISHES GRID */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6 bg-white border-2 border-black p-6 sm:p-10 shadow-[8px_8px_0px_rgba(17,17,17,1)]">
+                {/* Column 1 */}
+                <div className="space-y-6">
+                  {section.items.map((item, i) => (
+                    <div
+                      key={i}
+                      className="group border-b border-black/15 pb-4 last:border-none transition-all hover:pl-1.5"
+                    >
+                      <div className="flex justify-between items-baseline gap-4">
+                        <div className="flex items-center gap-2">
+                          {item.isVeg && (
+                            <span className="w-3.5 h-3.5 border border-green-700 flex items-center justify-center shrink-0" title="Vegetarian">
+                              <span className="w-1.5 h-1.5 bg-green-700 rounded-full" />
+                            </span>
+                          )}
+                          {item.isPork && (
+                            <span className="font-mono-code text-[9px] text-purple-700 font-bold border border-purple-400 px-1" title="Contains Pork">
+                              P
+                            </span>
+                          )}
+                          {item.isBeef && (
+                            <span className="font-mono-code text-[9px] text-red-700 font-bold border border-red-400 px-1" title="Contains Beef">
+                              B
+                            </span>
+                          )}
+                          <h4 className="font-editorial-serif text-lg font-bold text-neutral-900 group-hover:text-black">
+                            {item.name}
+                          </h4>
+                        </div>
+                        <span className="font-mono-code text-base font-black text-black shrink-0">
+                          {item.price.startsWith("₹") || item.price.includes("Veg") ? item.price : `₹${item.price}`}
+                        </span>
+                      </div>
+                      {item.desc && (
+                        <p className="font-mono-code text-xs text-neutral-600 mt-1 leading-relaxed">
+                          {item.desc}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Column 2 */}
+                <div className="space-y-6">
+                  {(section.itemsCol2 || []).map((item, i) => (
+                    <div
+                      key={i}
+                      className="group border-b border-black/15 pb-4 last:border-none transition-all hover:pl-1.5"
+                    >
+                      <div className="flex justify-between items-baseline gap-4">
+                        <div className="flex items-center gap-2">
+                          {item.isVeg && (
+                            <span className="w-3.5 h-3.5 border border-green-700 flex items-center justify-center shrink-0" title="Vegetarian">
+                              <span className="w-1.5 h-1.5 bg-green-700 rounded-full" />
+                            </span>
+                          )}
+                          {item.isPork && (
+                            <span className="font-mono-code text-[9px] text-purple-700 font-bold border border-purple-400 px-1" title="Contains Pork">
+                              P
+                            </span>
+                          )}
+                          {item.isBeef && (
+                            <span className="font-mono-code text-[9px] text-red-700 font-bold border border-red-400 px-1" title="Contains Beef">
+                              B
+                            </span>
+                          )}
+                          <h4 className="font-editorial-serif text-lg font-bold text-neutral-900 group-hover:text-black">
+                            {item.name}
+                          </h4>
+                        </div>
+                        <span className="font-mono-code text-base font-black text-black shrink-0">
+                          {item.price.startsWith("₹") || item.price.includes("Veg") ? item.price : `₹${item.price}`}
+                        </span>
+                      </div>
+                      {item.desc && (
+                        <p className="font-mono-code text-xs text-neutral-600 mt-1 leading-relaxed">
+                          {item.desc}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Footnote Bar */}
+              <div className="flex flex-wrap items-center justify-between gap-4 font-mono-code text-[11px] text-neutral-600 border-t-2 border-black pt-3 pb-6">
+                <div>
+                  <span className="font-bold text-black">NOTE:</span> {section.footnote}
+                </div>
+                <div className="flex items-center gap-4">
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 border border-green-700 flex items-center justify-center"><span className="w-1 h-1 bg-green-700 rounded-full" /></span>
+                    Veg
                   </span>
-                  <h4 className="font-editorial-serif text-lg font-bold">
-                    {activePage.extraFoodAlt}
-                  </h4>
-                  <p className="font-mono-code text-xs text-neutral-600">
-                    Freshly plated to order in our open kitchen. Ask your server for pairing suggestions!
-                  </p>
-                </div>
-                <div className="font-mono-code text-xs font-bold border border-black px-3 py-1 bg-[#f0ede6]">
-                  HOT & FRESH
+                  <span className="flex items-center gap-1.5 font-bold text-purple-700">
+                    [P] Pork
+                  </span>
+                  <span className="flex items-center gap-1.5 font-bold text-red-700">
+                    [B] Beef
+                  </span>
                 </div>
               </div>
-            )}
+            </section>
+          ))}
 
-            {/* 2-COLUMN EMBEDDED EDITORIAL DISHES GRID */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 bg-white border-2 border-black p-6 sm:p-10 shadow-[8px_8px_0px_rgba(17,17,17,1)]">
-              {/* Column 1 */}
-              <div className="space-y-6">
-                {activePage.items.map((item, i) => (
-                  <div
-                    key={i}
-                    className="group border-b border-black/15 pb-4 last:border-none transition-all hover:pl-1.5"
-                  >
-                    <div className="flex justify-between items-baseline gap-4">
-                      <div className="flex items-center gap-2">
-                        {item.isVeg && (
-                          <span className="w-3.5 h-3.5 border border-green-700 flex items-center justify-center shrink-0" title="Vegetarian">
-                            <span className="w-1.5 h-1.5 bg-green-700 rounded-full" />
-                          </span>
-                        )}
-                        {item.isPork && (
-                          <span className="font-mono-code text-[9px] text-purple-700 font-bold border border-purple-400 px-1" title="Contains Pork">
-                            P
-                          </span>
-                        )}
-                        {item.isBeef && (
-                          <span className="font-mono-code text-[9px] text-red-700 font-bold border border-red-400 px-1" title="Contains Beef">
-                            B
-                          </span>
-                        )}
-                        <h4 className="font-editorial-serif text-lg font-bold text-neutral-900 group-hover:text-black">
-                          {item.name}
-                        </h4>
-                      </div>
-                      <span className="font-mono-code text-base font-black text-black shrink-0">
-                        {item.price.startsWith("₹") || item.price.includes("Veg") ? item.price : `₹${item.price}`}
-                      </span>
-                    </div>
-                    {item.desc && (
-                      <p className="font-mono-code text-xs text-neutral-600 mt-1 leading-relaxed">
-                        {item.desc}
-                      </p>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              {/* Column 2 */}
-              <div className="space-y-6">
-                {(activePage.itemsCol2 || []).map((item, i) => (
-                  <div
-                    key={i}
-                    className="group border-b border-black/15 pb-4 last:border-none transition-all hover:pl-1.5"
-                  >
-                    <div className="flex justify-between items-baseline gap-4">
-                      <div className="flex items-center gap-2">
-                        {item.isVeg && (
-                          <span className="w-3.5 h-3.5 border border-green-700 flex items-center justify-center shrink-0" title="Vegetarian">
-                            <span className="w-1.5 h-1.5 bg-green-700 rounded-full" />
-                          </span>
-                        )}
-                        {item.isPork && (
-                          <span className="font-mono-code text-[9px] text-purple-700 font-bold border border-purple-400 px-1" title="Contains Pork">
-                            P
-                          </span>
-                        )}
-                        {item.isBeef && (
-                          <span className="font-mono-code text-[9px] text-red-700 font-bold border border-red-400 px-1" title="Contains Beef">
-                            B
-                          </span>
-                        )}
-                        <h4 className="font-editorial-serif text-lg font-bold text-neutral-900 group-hover:text-black">
-                          {item.name}
-                        </h4>
-                      </div>
-                      <span className="font-mono-code text-base font-black text-black shrink-0">
-                        {item.price.startsWith("₹") || item.price.includes("Veg") ? item.price : `₹${item.price}`}
-                      </span>
-                    </div>
-                    {item.desc && (
-                      <p className="font-mono-code text-xs text-neutral-600 mt-1 leading-relaxed">
-                        {item.desc}
-                      </p>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Footnote Bar */}
-            <div className="flex flex-wrap items-center justify-between gap-4 font-mono-code text-[11px] text-neutral-600 border-t-2 border-black pt-4">
-              <div>
-                <span className="font-bold text-black">NOTE:</span> {activePage.footnote}
-              </div>
-              <div className="flex items-center gap-4">
-                <span className="flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 border border-green-700 flex items-center justify-center"><span className="w-1 h-1 bg-green-700 rounded-full" /></span>
-                  Veg
-                </span>
-                <span className="flex items-center gap-1.5 font-bold text-purple-700">
-                  [P] Pork
-                </span>
-                <span className="flex items-center gap-1.5 font-bold text-red-700">
-                  [B] Beef
-                </span>
-              </div>
+          {/* END OF MENU SIGN-OFF & BACK TO TOP BUTTON */}
+          <div className="max-w-5xl mx-auto border-2 border-black bg-white p-8 text-center shadow-[8px_8px_0px_rgba(0,0,0,1)] my-8">
+            <h3 className="font-editorial-serif text-3xl font-black mb-2">END OF EDITORIAL MENU</h3>
+            <p className="font-mono-code text-xs text-neutral-600 max-w-md mx-auto mb-6">
+              BUNS N’ ROSES · SEMBAKKAM, CHENNAI · FOR RESERVATIONS & SPECIAL CANDLELIGHT DINNERS CALL 8778479045
+            </p>
+            <div className="flex justify-center gap-4">
+              <button
+                type="button"
+                onClick={scrollToTop}
+                className="font-mono-code text-xs font-bold uppercase px-6 py-2.5 bg-black text-white hover:bg-neutral-800 transition-all cursor-pointer shadow-[2px_2px_0px_rgba(0,0,0,0.3)]"
+              >
+                ↑ BACK TO TOP OF MENU
+              </button>
+              <button
+                type="button"
+                onClick={onClose}
+                className="font-mono-code text-xs font-bold uppercase px-6 py-2.5 border-2 border-black bg-white hover:bg-black hover:text-white transition-all cursor-pointer shadow-[2px_2px_0px_rgba(0,0,0,1)]"
+              >
+                CLOSE MENU [✕]
+              </button>
             </div>
           </div>
         </div>
 
-        {/* BOTTOM PAGINATION FOOTER */}
-        <footer className="px-6 py-3.5 bg-white border-t-2 border-black flex items-center justify-between">
-          <button
-            type="button"
-            disabled={activePageIndex === 0}
-            onClick={() => setActivePageIndex((prev) => Math.max(0, prev - 1))}
-            className={`font-mono-code text-xs font-bold uppercase px-4 py-2 border-2 border-black transition-all flex items-center gap-2 cursor-pointer ${
-              activePageIndex === 0
-                ? "opacity-30 cursor-not-allowed bg-neutral-100"
-                : "bg-white hover:bg-black hover:text-white shadow-[2px_2px_0px_rgba(0,0,0,1)]"
-            }`}
-          >
-            <span>←</span>
-            <span>PREV SECTION</span>
-          </button>
-
-          <div className="font-mono-code text-xs tracking-widest text-neutral-600 flex items-center gap-2">
-            <span>SECTION</span>
-            <span className="font-bold text-black border-b-2 border-black px-1.5">
-              0{activePageIndex + 1}
-            </span>
-            <span>/ 0{MENU_PAGES_DATA.length}</span>
-            <span className="hidden sm:inline-block font-semibold text-black ml-2">
-              ({activePage.title.toUpperCase()})
-            </span>
+        {/* BOTTOM STICKY FLOATING CONTROL BAR */}
+        <footer className="px-6 py-3 bg-white border-t-2 border-black flex items-center justify-between z-30">
+          <div className="font-mono-code text-xs text-neutral-600 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-green-600 animate-pulse" />
+            <span className="font-bold text-black uppercase">CONTINUOUS MENU VIEW</span>
+            <span className="hidden sm:inline text-neutral-500">· 9 CATEGORIES · TAP ANY TOP TAB TO JUMP</span>
           </div>
 
-          <button
-            type="button"
-            disabled={activePageIndex === MENU_PAGES_DATA.length - 1}
-            onClick={() => setActivePageIndex((prev) => Math.min(MENU_PAGES_DATA.length - 1, prev + 1))}
-            className={`font-mono-code text-xs font-bold uppercase px-4 py-2 border-2 border-black transition-all flex items-center gap-2 cursor-pointer ${
-              activePageIndex === MENU_PAGES_DATA.length - 1
-                ? "opacity-30 cursor-not-allowed bg-neutral-100"
-                : "bg-white hover:bg-black hover:text-white shadow-[2px_2px_0px_rgba(0,0,0,1)]"
-            }`}
-          >
-            <span>NEXT SECTION</span>
-            <span>→</span>
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={scrollToTop}
+              className="font-mono-code text-xs font-bold uppercase px-3 py-1.5 border border-black hover:bg-black hover:text-white transition-all cursor-pointer"
+            >
+              TOP ↑
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="font-mono-code text-xs font-bold uppercase px-4 py-1.5 bg-black text-white hover:bg-neutral-800 transition-all cursor-pointer shadow-[2px_2px_0px_rgba(0,0,0,0.4)]"
+            >
+              CLOSE
+            </button>
+          </div>
         </footer>
       </div>
     </div>
