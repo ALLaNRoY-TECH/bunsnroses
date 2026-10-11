@@ -980,41 +980,34 @@ Please let me know how to proceed!`;
           </div>
         </div>
 
-        {/* Real Candlelight Atmosphere Gallery (Reel Video + Real Candlelit Tables) */}
+        {/* Real Candlelight Atmosphere Gallery (Two Balanced Editorial Photos) */}
         <div className="candlelight-visual-gallery">
-          {/* Card 1: Real Ambient Video Reel */}
-          <div className="candle-frame candle-frame-large group">
-            <video
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="w-full h-full object-cover filter contrast-[1.05] brightness-90 group-hover:scale-105 transition-transform duration-700"
-              poster={IMAGES.candlelightReal1}
-            >
-              <source src={IMAGES.candlelightVideo} type="video/mp4" />
-            </video>
-            <div className="candle-badge-overlay">01 / LIVE REEL · THE NIGHT</div>
-          </div>
-
-          {/* Card 2: Real Candlelit Dinner Table 1 */}
-          <div className="candle-frame candle-frame-mid group">
+          {/* Card 1: Real Candlelit Dinner Table - Tableware & Glow */}
+          <div className="candle-frame group">
             <img
               src={IMAGES.candlelightReal1}
-              alt="Intimate candlelit dinner table with glowing amber candles, wine glass, baby's breath florals & 5-course plates"
-              className="w-full h-full object-cover filter contrast-[1.05] brightness-90 group-hover:scale-105 transition-transform duration-700"
+              alt="Intimate candlelit dinner table with glowing amber candles, wine glass, baby's breath florals & dining plates"
+              className="w-full h-full object-cover filter contrast-[1.05] brightness-95 group-hover:scale-105 transition-transform duration-700"
             />
-            <div className="candle-badge-overlay">02 / TABLEWARE & GLOW</div>
+            <div className="candle-badge-overlay">01 / TABLEWARE & GLOW</div>
+            <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end text-[#f7d8ba] font-mono-code text-[11px] bg-black/60 backdrop-blur-sm p-3 border border-white/10">
+              <span className="font-bold uppercase tracking-wider">THE TABLE SETTING</span>
+              <span className="text-white/70">WINE · FLORALS · CANDLES</span>
+            </div>
           </div>
 
-          {/* Card 3: Real Candlelit Dinner Table 2 */}
-          <div className="candle-frame candle-frame-small group">
+          {/* Card 2: Real Candlelit Dinner Table - Intimate Evening */}
+          <div className="candle-frame group">
             <img
               src={IMAGES.candlelightReal2}
-              alt="Atmospheric twilight dinner setting with candle lanterns and dining menus"
-              className="w-full h-full object-cover filter contrast-[1.05] brightness-90 group-hover:scale-105 transition-transform duration-700"
+              alt="Atmospheric twilight dinner setting with candle lanterns and private dining table"
+              className="w-full h-full object-cover filter contrast-[1.05] brightness-95 group-hover:scale-105 transition-transform duration-700"
             />
-            <div className="candle-badge-overlay">03 / INTIMATE COURSES</div>
+            <div className="candle-badge-overlay">02 / INTIMATE COURSES</div>
+            <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end text-[#f7d8ba] font-mono-code text-[11px] bg-black/60 backdrop-blur-sm p-3 border border-white/10">
+              <span className="font-bold uppercase tracking-wider">PRIVATE GARDEN NOOK</span>
+              <span className="text-white/70">NIGHTS ONLY · 5-COURSE MENU</span>
+            </div>
           </div>
         </div>
 
