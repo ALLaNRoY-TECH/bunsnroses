@@ -177,65 +177,6 @@ const FOOD_HIGHLIGHTS = [
   },
 ];
 
-// Gallery items for "Our World" section with authentic café imagery
-const OUR_WORLD_ITEMS = [
-  {
-    id: 1,
-    tag: "THE VENUE",
-    title: "Dining Under The Open Sky",
-    caption: "Our signature outdoor courtyard & glowing open brick oven at dusk in Sembakkam.",
-    image: "/world/dining-facade.png",
-    colSpan: "world-card-col-6",
-  },
-  {
-    id: 2,
-    tag: "COURTYARD VIBES",
-    title: "Late Night Lantern Tables",
-    caption: "Warm glow, ambient evening breeze, and rustic wood-and-iron seating.",
-    image: "/world/courtyard-lantern.png",
-    colSpan: "world-card-col-6",
-  },
-  {
-    id: 3,
-    tag: "NIGHTS AT BUNS",
-    title: "Twilight Courtyard",
-    caption: "When the city calms down and our garden patio comes alive under the canopy.",
-    image: "/world/courtyard-night.jpg",
-    colSpan: "world-card-col-4",
-  },
-  {
-    id: 4,
-    tag: "CANDLELIGHT EXPERIENCES",
-    title: "Intimate Candlelit Table",
-    caption: "Private bookings, romantic anniversary setups, and curated dining under candlelight.",
-    image: "/world/candlelight-dinner.jpg",
-    colSpan: "world-card-col-4",
-  },
-  {
-    id: 5,
-    tag: "THE SIGNATURE",
-    title: "Glowing Cursive Neon",
-    caption: "The iconic warm amber glow lighting up our rustic exposed brick.",
-    image: "/experience_neon_sign.jpg",
-    colSpan: "world-card-col-4",
-  },
-  {
-    id: 6,
-    tag: "GARDEN DETAILS",
-    title: "The Lion Head Water Fountain",
-    caption: "Vintage European stone fountain bubbling softly amidst the garden greenery.",
-    image: "/plates/lion-fountain.png",
-    colSpan: "world-card-col-6",
-  },
-  {
-    id: 7,
-    tag: "THE COUNTER",
-    title: "Order & Pay Bar",
-    caption: "Where your gourmet smash burgers, artisanal pastas, and hot brews begin.",
-    image: "/plates/order-counter.png",
-    colSpan: "world-card-col-6",
-  },
-];
 
 function IntroSplash() {
   const [show, setShow] = useState(() => !localStorage.getItem("bnr_intro_shown"));
@@ -282,7 +223,6 @@ export default function App() {
   const [fullMenuModalOpen, setFullMenuModalOpen] = useState(false);
   const [candlelightModalOpen, setCandlelightModalOpen] = useState(false);
   const [activeFoodTab, setActiveFoodTab] = useState("all");
-  const [selectedWorldItem, setSelectedWorldItem] = useState<typeof OUR_WORLD_ITEMS[0] | null>(null);
 
   // Hero video mute/unmute state & ref
   const [isMuted, setIsMuted] = useState(true);
@@ -441,53 +381,6 @@ Please let me know how to proceed!`;
         </div>
       )}
 
-      {/* WORLD GALLERY LIGHTBOX MODAL */}
-      {selectedWorldItem && (
-        <div
-          className="booking-modal-overlay"
-          onClick={() => setSelectedWorldItem(null)}
-        >
-          <div
-            className="booking-modal-content max-w-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              className="booking-modal-close"
-              onClick={() => setSelectedWorldItem(null)}
-              aria-label="Close image modal"
-            >
-              ✕
-            </button>
-            <div className="border border-black overflow-hidden mb-4 h-[420px]">
-              <img
-                src={selectedWorldItem.image}
-                alt={selectedWorldItem.title}
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <span className="font-mono-code text-xs bg-black text-white px-2 py-1 inline-block mb-2">
-              {selectedWorldItem.tag}
-            </span>
-            <h3 className="font-editorial-serif text-3xl font-bold mb-2">
-              {selectedWorldItem.title}
-            </h3>
-            <p className="text-neutral-700 text-sm mb-4">
-              {selectedWorldItem.caption}
-            </p>
-            <div className="flex justify-between items-center pt-3 border-t border-black/20 font-mono-code text-xs">
-              <span>BUNS N’ ROSES · SEMBAKKAM</span>
-              <a
-                href="https://www.instagram.com/buns.n.roses.chennai"
-                target="_blank"
-                rel="noreferrer"
-                className="underline font-bold"
-              >
-                VIEW ON INSTAGRAM ↗
-              </a>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* ---------------------------------------------------- */}
       {/* EDITORIAL NAVIGATION */}
@@ -507,7 +400,6 @@ Please let me know how to proceed!`;
           <a href="#experience">The Experience</a>
           <a href="#candlelight">Candlelight Dinner</a>
           <a href="#calendar">Weekly Calendar</a>
-          <a href="#world">Our World</a>
           <a href="#visit">Visit</a>
         </div>
 
@@ -549,11 +441,8 @@ Please let me know how to proceed!`;
           <a href="#calendar" onClick={closeMobileMenu}>
             <span>05 / WEEKLY CALENDAR</span> <span>↗</span>
           </a>
-          <a href="#world" onClick={closeMobileMenu}>
-            <span>06 / OUR WORLD</span> <span>↗</span>
-          </a>
           <a href="#visit" onClick={closeMobileMenu}>
-            <span>07 / VISIT US</span> <span>↗</span>
+            <span>06 / VISIT US</span> <span>↗</span>
           </a>
           <div className="mt-8 flex flex-col gap-3">
             <button
@@ -652,8 +541,8 @@ Please let me know how to proceed!`;
                 <span>EXPLORE MENU</span>
                 <span>↗</span>
               </button>
-              <a href="#world" className="btn-editorial-outline">
-                <span>DISCOVER OUR WORLD</span>
+              <a href="#experience" className="btn-editorial-outline">
+                <span>THE CAFÉ EXPERIENCE</span>
                 <span>↗</span>
               </a>
             </div>
@@ -1346,41 +1235,6 @@ Please let me know how to proceed!`;
         </div>
       </section>
 
-      {/* ---------------------------------------------------- */}
-      {/* 7. OUR WORLD (VISUAL GALLERY) */}
-      {/* ---------------------------------------------------- */}
-      <section className="world-section" id="world">
-        <div className="world-header">
-          <div>
-            <span className="font-mono-code text-xs text-neutral-500 block mb-2">
-              DISPATCHES & ARCHIVES
-            </span>
-            <h2>OUR WORLD</h2>
-          </div>
-          <div className="text-right font-mono-code text-xs text-neutral-600 max-w-xs">
-            <span>SPECIAL EVENTS · LIVE GIGS · SEASONAL DRINKS · CAFÉ MOMENTS · ARTWORK COLLAGE</span>
-          </div>
-        </div>
-
-        <div className="world-gallery-grid">
-          {OUR_WORLD_ITEMS.map((item) => (
-            <div
-              key={item.id}
-              className={`world-card ${item.colSpan} cursor-pointer`}
-              onClick={() => setSelectedWorldItem(item)}
-            >
-              <span className="world-card-tag">{item.tag}</span>
-              <div className="world-card-img-wrap">
-                <img src={item.image} alt={item.title} />
-              </div>
-              <div className="world-card-caption">
-                <span className="font-bold">{item.title}</span>
-                <span>EXPAND [+]</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
 
       {/* ---------------------------------------------------- */}
       {/* 8. VISIT US */}
