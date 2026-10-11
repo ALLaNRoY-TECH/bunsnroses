@@ -1,0 +1,10 @@
+{
+  "description": "Showcasing the vibrant atmosphere and menu of a Gen-Z café, this responsive website offers an engaging experience for food lovers to explore, book, and connect.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
