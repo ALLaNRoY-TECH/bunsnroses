@@ -1,7 +1,11 @@
 {
-  "description": "Showcasing the vibrant atmosphere and menu of a Gen-Z café, this responsive website offers an engaging experience for food lovers to explore, book, and connect.",
+  "title": "Buns n’ Roses | Gourmet Burgers, Pasta & Outdoor Café Chennai",
+  "description": "Showcasing the vibrant atmosphere and menu of Buns n’ Roses, this responsive website offers an engaging experience for food lovers to explore, book, and connect.",
+  "icons": {
+    "icon": "/favicon.svg"
+  },
   "robots": {
-    "index": false
+    "index": true
   },
   "accessibility": {
     "addBypassLinks": false,
