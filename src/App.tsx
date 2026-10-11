@@ -820,27 +820,7 @@ Please let me know how to proceed!`;
           </figure>
         </div>
 
-        {/* Experience Philosophy Strip */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 pt-8 border-t-2 border-black font-mono-code text-xs">
-          <div className="border-r-0 md:border-r border-black/30 pr-4">
-            <strong className="block text-sm mb-1 font-bold">🌿 BOTANICAL GREENERY</strong>
-            <p className="text-neutral-600 m-0 leading-relaxed">
-              Surrounded by living monsteras, ferns, and bougainvillea. Indoor-outdoor harmony that keeps Chennai heat outside.
-            </p>
-          </div>
-          <div className="border-r-0 md:border-r border-black/30 pr-4">
-            <strong className="block text-sm mb-1 font-bold">🕯️ AMBIENT LIGHTING</strong>
-            <p className="text-neutral-600 m-0 leading-relaxed">
-              Tungsten filaments, taper candles, and warm golden hues tuned specifically to flatter your eyes and table companions.
-            </p>
-          </div>
-          <div>
-            <strong className="block text-sm mb-1 font-bold">🎶 ANALOG SOUNDTRACK</strong>
-            <p className="text-neutral-600 m-0 leading-relaxed">
-              Curated vinyl records spinning daily. From Japanese jazz fusion to vintage bossa nova and ambient indie.
-            </p>
-          </div>
-        </div>
+
       </section>
 
       {/* ---------------------------------------------------- */}
